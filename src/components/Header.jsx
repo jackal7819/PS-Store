@@ -1,6 +1,7 @@
 import {RiPlaystationLine, RiShoppingCartLine, RiUser3Line } from 'react-icons/ri';   
 
-const Header = () => {
+const Header = (props) => {
+    const {isOpen} = props;
     return (
         <header className='flex justify-between items-center p-10 border-b-2 border-gray-200'>
             <div className='flex items-center'>
@@ -12,7 +13,7 @@ const Header = () => {
             </div>
             <ul className='flex gap-6 items-center'>
                 <li className='flex gap-3'>
-                    <RiShoppingCartLine size={25} className='cursor-pointer' />
+                    <RiShoppingCartLine onClick={isOpen} size={25} className='cursor-pointer' />
                     <span>$190</span>
                 </li>
                 <li className='header__item'>

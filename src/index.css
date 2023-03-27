@@ -11,3 +11,7 @@ body {
     user-select: none;
     background: #0c6094;
 }
+
+.over {
+    overflow: hidden;
+}
