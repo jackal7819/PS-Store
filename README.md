@@ -1,8 +1,8 @@
 # PS Store
 
-## React JS, Tailwind
+## React JS, useEffect, Tailwind, MOCKAPI
 
-Demo - https://modalwindow.onrender.com
+Demo - https://ps-store.onrender.com
 
 ## Available Scripts
 

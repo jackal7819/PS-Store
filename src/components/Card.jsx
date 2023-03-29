@@ -3,7 +3,7 @@ import { BsPlusLg } from 'react-icons/bs';
 import { RiHeartFill, RiHeartLine, RiShoppingCartFill } from 'react-icons/ri';
 
 const Card = (props) => {
-    const { title, image, price, onPlus } = props;
+    const { title, image, price, onPlus, onFavorite } = props;
     const [check, setCheck] = useState(false);
     const [favorite, setFavorite] = useState(false);
 
@@ -12,7 +12,10 @@ const Card = (props) => {
         onPlus({ title, image, price });
     };
 
-    const isFavorite = () => setFavorite(!favorite);
+    const onClickFavorite = () => {
+        onFavorite({ title, image, price });
+        setFavorite(!favorite);
+    };
 
     return (
         <div className='w-64 p-5 border-2 shadow-lg rounded-3xl duration-300 hover:translate-y-3'>
@@ -23,7 +26,7 @@ const Card = (props) => {
                     <span className='opacity-50 uppercase text-xs'>Price:</span>
                     <p className='font-bold'>${price}</p>
                 </div>
-                <button onClick={isFavorite}>
+                <button onClick={onClickFavorite}>
                     {favorite ? (
                         <RiHeartFill size={25} className='fill-orange-300' />
                     ) : (
