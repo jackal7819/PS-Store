@@ -3,9 +3,17 @@ import { BsPlusLg } from 'react-icons/bs';
 import { RiHeartFill, RiHeartLine, RiShoppingCartFill } from 'react-icons/ri';
 
 const Card = (props) => {
-    const { title, image, price, onPlus, onFavorite } = props;
+    const {
+        id,
+        title,
+        image,
+        price,
+        onPlus,
+        onFavorite,
+        isFavorite = false,
+    } = props;
     const [check, setCheck] = useState(false);
-    const [favorite, setFavorite] = useState(false);
+    const [favorite, setFavorite] = useState(isFavorite);
 
     const isChecked = () => {
         setCheck(!check);
@@ -13,7 +21,7 @@ const Card = (props) => {
     };
 
     const onClickFavorite = () => {
-        onFavorite({ title, image, price });
+        onFavorite({ id, title, image, price });
         setFavorite(!favorite);
     };
 

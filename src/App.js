@@ -24,6 +24,9 @@ const App = () => {
         axios
             .get(MOCKAPI_URL_CART)
             .then((response) => setCartItems(response.data));
+        axios
+            .get(MOCKAPI_URL_FAVORITES)
+            .then((response) => setFavorites(response.data));
     }, []);
 
     const onAddToCart = (obj) => {
@@ -36,10 +39,18 @@ const App = () => {
         setCartItems((prev) => prev.filter((el) => el.id !== id));
     };
 
-    const onAddToFavorite = (obj) => {
-        axios.post(MOCKAPI_URL_FAVORITES, obj);
-        setFavorites((prev) => [...prev, obj]);
-        console.log(favorites);
+    const onAddToFavorite = async (obj) => {
+        try {
+            if (favorites.find((el) => el.id === obj.id)) {
+                axios.delete(`${MOCKAPI_URL_FAVORITES}/${obj.id}`);
+                setFavorites((prev) => prev.filter((el) => el.id !== obj.id));
+            } else if (!JSON.stringify(favorites).includes(obj.title)) {
+                const { data } = await axios.post(MOCKAPI_URL_FAVORITES, obj);
+                setFavorites((prev) => [...prev, data]);
+            }
+        } catch (error) {
+            alert('Failed to add to favorites');
+        }
     };
 
     const onChangeSearchInput = (event) => {
@@ -78,7 +89,15 @@ const App = () => {
                         />
                     }
                 />
-                <Route path='/favorites' element={<Favorites />} />
+                <Route
+                    path='/favorites'
+                    element={
+                        <Favorites
+                            data={favorites}
+                            onAddToFavorite={onAddToFavorite}
+                        />
+                    }
+                />
             </Routes>
         </div>
     );

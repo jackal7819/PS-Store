@@ -9,7 +9,7 @@ const Home = (props) => {
         onAddToFavorite,
         onChangeSearchInput,
     } = props;
-    
+
     const games = data
         .filter((el) =>
             el.title.toLowerCase().includes(searchValue.toLowerCase())
@@ -17,11 +17,9 @@ const Home = (props) => {
         .map((game) => (
             <Card
                 key={game.id}
-                title={game.title}
-                image={game.image}
-                price={game.price}
                 onPlus={(obj) => onAddToCart(obj)}
                 onFavorite={(obj) => onAddToFavorite(obj)}
+                {...game}
             />
         ));
 
