@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import AppContext from './context';
 import axios from 'axios';
 import Home from './pages/Home';
 import Favorites from './pages/Favorites';
@@ -12,6 +13,7 @@ const App = () => {
     const [cartItems, setCartItems] = useState([]);
     const [favorites, setFavorites] = useState([]);
     const [searchValue, setSearchValue] = useState('');
+    const [loading, setLoading] = useState(true);
 
     const MOCKAPI_URL_STORE =
         'https://64118c946a69ae7545207e4f.mockapi.io/ps_store';
@@ -20,18 +22,30 @@ const App = () => {
         'https://642367f0001cb9fc203e9adf.mockapi.io/favorites';
 
     useEffect(() => {
-        axios.get(MOCKAPI_URL_STORE).then((response) => setData(response.data));
-        axios
-            .get(MOCKAPI_URL_CART)
-            .then((response) => setCartItems(response.data));
-        axios
-            .get(MOCKAPI_URL_FAVORITES)
-            .then((response) => setFavorites(response.data));
+        const fetchData = async () => {
+            const cartResponse = await axios.get(MOCKAPI_URL_CART);
+            const favoritesResponse = await axios.get(MOCKAPI_URL_FAVORITES);
+            const dataResponse = await axios.get(MOCKAPI_URL_STORE);
+
+            setLoading(false);
+            setCartItems(cartResponse.data);
+            setFavorites(favoritesResponse.data);
+            setData(dataResponse.data);
+        };
+
+        fetchData();
     }, []);
 
     const onAddToCart = (obj) => {
-        axios.post(MOCKAPI_URL_CART, obj);
-        setCartItems((prev) => [...prev, obj]);
+        if (cartItems.find((item) => item.title === obj.title)) {
+            axios.delete(`${MOCKAPI_URL_CART}/${obj.title}`);
+            setCartItems((prev) =>
+                prev.filter((item) => item.title !== obj.title)
+            );
+        } else {
+            axios.post(MOCKAPI_URL_CART, obj);
+            setCartItems((prev) => [...prev, obj]);
+        }
     };
 
     const onRemoveFromCart = (id) => {
@@ -41,10 +55,11 @@ const App = () => {
 
     const onAddToFavorite = async (obj) => {
         try {
-            if (favorites.find((el) => el.id === obj.id)) {
+            if (JSON.stringify(favorites).includes(obj.title)) {
                 axios.delete(`${MOCKAPI_URL_FAVORITES}/${obj.id}`);
                 setFavorites((prev) => prev.filter((el) => el.id !== obj.id));
-            } else if (!JSON.stringify(favorites).includes(obj.title)) {
+            }
+            if (!JSON.stringify(favorites).includes(obj.title)) {
                 const { data } = await axios.post(MOCKAPI_URL_FAVORITES, obj);
                 setFavorites((prev) => [...prev, data]);
             }
@@ -57,49 +72,54 @@ const App = () => {
         setSearchValue(event.target.value);
     };
 
+    const getIsCheck = (title) => cartItems.some((obj) => obj.title === title);
+
     return (
-        <div className='bg-gray-100 shadow-lg rounded-2xl max-w-7xl my-12 mx-auto'>
-            {cartOpen && (
-                <Cart
-                    onRemove={onRemoveFromCart}
-                    items={cartItems}
-                    isClosed={() => {
-                        setCartOpen(false);
-                        document.body.style.overflow = '';
+        <AppContext.Provider
+            value={{ data, cartItems, favorites, getIsCheck, onAddToFavorite, setCartItems, MOCKAPI_URL_CART }}>
+            <div className='bg-gray-100 shadow-lg rounded-2xl max-w-7xl my-12 mx-auto'>
+                {cartOpen && (
+                    <Cart
+                        onRemove={onRemoveFromCart}
+                        items={cartItems}
+                        isClosed={() => {
+                            setCartOpen(false);
+                            document.body.style.overflow = '';
+                        }}
+                    />
+                )}
+                <Header
+                    isOpen={() => {
+                        setCartOpen(true);
+                        document.body.style.overflow = 'hidden';
                     }}
                 />
-            )}
-            <Header
-                isOpen={() => {
-                    setCartOpen(true);
-                    document.body.style.overflow = 'hidden';
-                }}
-            />
-            <Routes>
-                <Route
-                    path='/'
-                    exact
-                    element={
-                        <Home
-                            data={data}
-                            searchValue={searchValue}
-                            onAddToCart={onAddToCart}
-                            onAddToFavorite={onAddToFavorite}
-                            onChangeSearchInput={onChangeSearchInput}
-                        />
-                    }
-                />
-                <Route
-                    path='/favorites'
-                    element={
-                        <Favorites
-                            data={favorites}
-                            onAddToFavorite={onAddToFavorite}
-                        />
-                    }
-                />
-            </Routes>
-        </div>
+                <Routes>
+                    <Route
+                        path='/'
+                        exact
+                        element={
+                            <Home
+                                data={data}
+                                loading={loading}
+                                cartItems={cartItems}
+                                favorites={favorites}
+                                searchValue={searchValue}
+                                onAddToCart={onAddToCart}
+                                onAddToFavorite={onAddToFavorite}
+                                onChangeSearchInput={onChangeSearchInput}
+                            />
+                        }
+                    />
+                    <Route
+                        path='/favorites'
+                        element={
+                            <Favorites />
+                        }
+                    />
+                </Routes>
+            </div>
+        </AppContext.Provider>
     );
 };
 

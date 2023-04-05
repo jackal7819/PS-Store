@@ -1,10 +1,45 @@
-import { RiCloseFill, RiShoppingCartLine } from 'react-icons/ri';
+import Info from './Info';
+import AppContext from '../context';
+import axios from 'axios';
+import { useContext, useState } from 'react';
+import {
+    RiCloseFill,
+    RiShoppingCartLine,
+    RiShoppingCartFill,
+} from 'react-icons/ri';
 import { TbArrowRightCircle } from 'react-icons/tb';
-import { BiWinkSmile } from 'react-icons/bi';
+import { BiWinkSmile, BiSmile } from 'react-icons/bi';
 
-const Cart = (props) => {
-    let { isClosed, onRemove, items = [] } = props;
+const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+const Cart = ({ isClosed, onRemove, items = [] }) => {
+    const { cartItems, setCartItems, MOCKAPI_URL_CART } =
+        useContext(AppContext);
+    const [numberOrder, setNumberOrder] = useState(null);
+    const [isCompleted, setIsComleted] = useState(false);
     const sum = items.reduce((acc, cur) => acc + Number(cur.price), 0);
+
+    const MOCKAPI_URL_ORDERS =
+        'https://642d910c66a20ec9cea10382.mockapi.io/orders';
+
+    const onClickCompleted = async () => {
+        try {
+            const { data } = await axios.post(MOCKAPI_URL_ORDERS, {
+                items: cartItems,
+            });
+            setNumberOrder(data.id);
+            setIsComleted(true);
+            setCartItems([]);
+
+            for (let i = 0; i < cartItems.length; i++) {
+                const item = cartItems[i];
+                await axios.delete(`${MOCKAPI_URL_CART}/${item.id}`);
+                await delay(2000);
+            }
+        } catch (error) {
+            alert('Failed to create an order :(');
+        }
+    };
 
     return (
         <div className='cart absolute left-0 top-0 w-full h-full bg-[#0000004d] z-10'>
@@ -63,7 +98,9 @@ const Cart = (props) => {
                                 </p>
                             </li>
                         </ul>
-                        <button className='rounded-2xl text-white p-3 uppercase duration-300 flex items-center justify-center group bg-orange-300 hover:bg-orange-400 active:bg-orange-500'>
+                        <button
+                            onClick={onClickCompleted}
+                            className='rounded-2xl text-white p-3 uppercase duration-300 flex items-center justify-center group bg-orange-300 hover:bg-orange-400 active:bg-orange-500'>
                             Checkout{' '}
                             <span className='group-hover:rotate-90 duration-300'>
                                 <TbArrowRightCircle
@@ -73,18 +110,32 @@ const Cart = (props) => {
                             </span>
                         </button>
                     </div>
+                ) : isCompleted ? (
+                    <Info
+                        image={
+                            <RiShoppingCartFill
+                                size={50}
+                                className='fill-blue-400'
+                            />
+                        }
+                        title={`Order #${numberOrder} is placed`}
+                        description='Your order is being completed and will soon be handed over to the courier delivery service'
+                        smile={<BiSmile size={25} className='fill-blue-400' />}
+                    />
                 ) : (
-                    <div className='flex flex-col gap-5 items-center m-auto'>
-                        <RiShoppingCartLine
-                            size={50}
-                            className='fill-green-400'
-                        />
-                        <h3 className='font-bold text-xl'>Cart is empty</h3>
-                        <div className='flex gap-3 items-center'>
-                            <p>But it's never too late to fix it</p>
+                    <Info
+                        image={
+                            <RiShoppingCartLine
+                                size={50}
+                                className='fill-green-400'
+                            />
+                        }
+                        title='Cart is empty'
+                        description="But it's never too late to fix it"
+                        smile={
                             <BiWinkSmile size={25} className='fill-green-400' />
-                        </div>
-                    </div>
+                        }
+                    />
                 )}
             </div>
         </div>

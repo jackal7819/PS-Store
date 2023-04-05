@@ -4,24 +4,29 @@ import { RiSearchLine } from 'react-icons/ri';
 const Home = (props) => {
     const {
         data,
+        loading,
+        favorites,
         searchValue,
         onAddToCart,
         onAddToFavorite,
         onChangeSearchInput,
     } = props;
 
-    const games = data
-        .filter((el) =>
-            el.title.toLowerCase().includes(searchValue.toLowerCase())
-        )
-        .map((game) => (
+    const filteredData = data.filter((el) =>
+        el.title.toLowerCase().includes(searchValue.toLowerCase())
+    );
+    const games = (loading ? [...Array(12)] : filteredData).map(
+        (game, index) => (
             <Card
-                key={game.id}
+                key={index}
+                isLoading={loading}
                 onPlus={(obj) => onAddToCart(obj)}
                 onFavorite={(obj) => onAddToFavorite(obj)}
+                isFavorite={favorites.some((obj) => obj.title === game.title)}
                 {...game}
             />
-        ));
+        )
+    );
 
     return (
         <div className='p-10'>

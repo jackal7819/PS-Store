@@ -1,7 +1,9 @@
 import Card from '../components/Card';
+import AppContext from '../context';
+import { useContext } from 'react';
 
-const Favorites = (props) => {
-    const { data, onAddToFavorite } = props;
+const Favorites = () => {
+    const { favorites, onAddToFavorite } = useContext(AppContext);
 
     return (
         <div className='p-10'>
@@ -9,7 +11,7 @@ const Favorites = (props) => {
                 <h1 className='font-bold text-3xl'>My Favorites</h1>
             </div>
             <div className='flex justify-center gap-[58px] flex-wrap sm:justify-start'>
-                {data.map((game) => (
+                {favorites.map((game) => (
                     <Card
                         key={game.id}
                         isFavorite={true}
