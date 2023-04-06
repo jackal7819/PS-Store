@@ -62,32 +62,36 @@ const Card = (props) => {
                             </span>
                             <p className='font-bold'>${price}</p>
                         </div>
-                        <button onClick={onClickFavorite}>
-                            {favorite ? (
-                                <RiHeartFill
-                                    size={25}
-                                    className='fill-orange-300'
-                                />
-                            ) : (
-                                <RiHeartLine
-                                    size={25}
-                                    className='fill-orange-300'
-                                />
-                            )}
-                        </button>
-                        <button onClick={onClickPlus}>
-                            {getIsCheck(title) ? (
-                                <RiShoppingCartFill
-                                    size={25}
-                                    className='fill-green-400'
-                                />
-                            ) : (
-                                <BsPlusLg
-                                    size={25}
-                                    className='fill-slate-400'
-                                />
-                            )}
-                        </button>
+                        {onFavorite && (
+                            <button onClick={onClickFavorite}>
+                                {favorite ? (
+                                    <RiHeartFill
+                                        size={25}
+                                        className='fill-orange-300'
+                                    />
+                                ) : (
+                                    <RiHeartLine
+                                        size={25}
+                                        className='fill-orange-300'
+                                    />
+                                )}
+                            </button>
+                        )}
+                        {onPlus && (
+                            <button onClick={onClickPlus}>
+                                {getIsCheck(title) ? (
+                                    <RiShoppingCartFill
+                                        size={25}
+                                        className='fill-green-400'
+                                    />
+                                ) : (
+                                    <BsPlusLg
+                                        size={25}
+                                        className='fill-slate-400'
+                                    />
+                                )}
+                            </button>
+                        )}
                     </div>
                 </>
             )}

@@ -1,7 +1,7 @@
 import Info from './Info';
-import AppContext from '../context';
+import useTotal from '../hooks/useTotal';
 import axios from 'axios';
-import { useContext, useState } from 'react';
+import { useState } from 'react';
 import {
     RiCloseFill,
     RiShoppingCartLine,
@@ -13,11 +13,9 @@ import { BiWinkSmile, BiSmile } from 'react-icons/bi';
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 const Cart = ({ isClosed, onRemove, items = [] }) => {
-    const { cartItems, setCartItems, MOCKAPI_URL_CART } =
-        useContext(AppContext);
+    const { cartItems, setCartItems, MOCKAPI_URL_CART, total } = useTotal();
     const [numberOrder, setNumberOrder] = useState(null);
     const [isCompleted, setIsComleted] = useState(false);
-    const sum = items.reduce((acc, cur) => acc + Number(cur.price), 0);
 
     const MOCKAPI_URL_ORDERS =
         'https://642d910c66a20ec9cea10382.mockapi.io/orders';
@@ -88,13 +86,13 @@ const Cart = ({ isClosed, onRemove, items = [] }) => {
                             <li className='flex justify-between mb-5'>
                                 <span>Total:</span>
                                 <div className='border-b grow m-[6px]'></div>
-                                <p className='font-bold'>${sum.toFixed(2)}</p>
+                                <p className='font-bold'>${total.toFixed(2)}</p>
                             </li>
                             <li className='flex justify-between'>
                                 <span>Tax 20%:</span>
                                 <div className='border-b grow m-[6px]'></div>
                                 <p className='font-bold'>
-                                    ${(sum * 0.2).toFixed(2)}
+                                    ${(total * 0.2).toFixed(2)}
                                 </p>
                             </li>
                         </ul>

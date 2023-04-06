@@ -5,6 +5,7 @@ import Home from './pages/Home';
 import Favorites from './pages/Favorites';
 import Header from './components/Header';
 import Cart from './components/Cart';
+import Orders from './pages/Orders';
 import { Routes, Route } from 'react-router-dom';
 
 const App = () => {
@@ -23,14 +24,20 @@ const App = () => {
 
     useEffect(() => {
         const fetchData = async () => {
-            const cartResponse = await axios.get(MOCKAPI_URL_CART);
-            const favoritesResponse = await axios.get(MOCKAPI_URL_FAVORITES);
-            const dataResponse = await axios.get(MOCKAPI_URL_STORE);
+            try {
+                const cartResponse = await axios.get(MOCKAPI_URL_CART);
+                const favoritesResponse = await axios.get(
+                    MOCKAPI_URL_FAVORITES
+                );
+                const dataResponse = await axios.get(MOCKAPI_URL_STORE);
 
-            setLoading(false);
-            setCartItems(cartResponse.data);
-            setFavorites(favoritesResponse.data);
-            setData(dataResponse.data);
+                setLoading(false);
+                setCartItems(cartResponse.data);
+                setFavorites(favoritesResponse.data);
+                setData(dataResponse.data);
+            } catch (error) {
+                alert('Failed to get data');
+            }
         };
 
         fetchData();
@@ -76,7 +83,15 @@ const App = () => {
 
     return (
         <AppContext.Provider
-            value={{ data, cartItems, favorites, getIsCheck, onAddToFavorite, setCartItems, MOCKAPI_URL_CART }}>
+            value={{
+                data,
+                cartItems,
+                favorites,
+                getIsCheck,
+                onAddToFavorite,
+                setCartItems,
+                MOCKAPI_URL_CART,
+            }}>
             <div className='bg-gray-100 shadow-lg rounded-2xl max-w-7xl my-12 mx-auto'>
                 {cartOpen && (
                     <Cart
@@ -111,12 +126,8 @@ const App = () => {
                             />
                         }
                     />
-                    <Route
-                        path='/favorites'
-                        element={
-                            <Favorites />
-                        }
-                    />
+                    <Route path='/favorites' element={<Favorites />} />
+                    <Route path='/orders' element={<Orders />} />
                 </Routes>
             </div>
         </AppContext.Provider>

@@ -15,7 +15,7 @@ const Home = (props) => {
     const filteredData = data.filter((el) =>
         el.title.toLowerCase().includes(searchValue.toLowerCase())
     );
-    const games = (loading ? [...Array(12)] : filteredData).map(
+    const games = (loading ? [...Array(8)] : filteredData).map(
         (game, index) => (
             <Card
                 key={index}

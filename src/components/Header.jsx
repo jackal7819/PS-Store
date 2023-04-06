@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import useTotal from '../hooks/useTotal';
 import {
     RiPlaystationLine,
     RiShoppingCartLine,
@@ -6,8 +7,8 @@ import {
     RiHeartLine,
 } from 'react-icons/ri';
 
-const Header = (props) => {
-    const { isOpen } = props;
+const Header = ({ isOpen }) => {
+    const { total } = useTotal();
     return (
         <header className='flex justify-between items-center p-10 border-b-2 border-gray-200'>
             <Link to='/'>
@@ -28,7 +29,7 @@ const Header = (props) => {
                         size={25}
                         className='cursor-pointer'
                     />
-                    <span>$190</span>
+                    <span>${total.toFixed(2)}</span>
                 </li>
                 <li>
                     <Link to='/favorites'>
@@ -36,7 +37,9 @@ const Header = (props) => {
                     </Link>
                 </li>
                 <li>
-                    <RiUser3Line size={25} className='cursor-pointer' />
+                    <Link to='/orders'>
+                        <RiUser3Line size={25} className='cursor-pointer' />
+                    </Link>
                 </li>
             </ul>
         </header>
