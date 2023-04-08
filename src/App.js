@@ -125,14 +125,12 @@ const App = () => {
                         items={cartItems}
                         isClosed={() => {
                             setCartOpen(false);
-                            document.body.style.overflow = '';
                         }}
                     />
                 )}
                 <Header
                     isOpen={() => {
                         setCartOpen(true);
-                        document.body.style.overflow = 'hidden';
                     }}
                 />
                 <Routes>
