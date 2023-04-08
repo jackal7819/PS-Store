@@ -37,41 +37,66 @@ const App = () => {
                 setData(dataResponse.data);
             } catch (error) {
                 alert('Failed to get data');
+                console.error(error);
             }
         };
 
         fetchData();
     }, []);
 
-    const onAddToCart = (obj) => {
-        if (cartItems.find((item) => item.title === obj.title)) {
-            axios.delete(`${MOCKAPI_URL_CART}/${obj.title}`);
-            setCartItems((prev) =>
-                prev.filter((item) => item.title !== obj.title)
+    const onAddToCart = async (obj) => {
+        try {
+            const findItem = cartItems.find(
+                (item) => Number(item.gameId) === Number(obj.id)
             );
-        } else {
-            axios.post(MOCKAPI_URL_CART, obj);
-            setCartItems((prev) => [...prev, obj]);
+            if (findItem) {
+                setCartItems((prev) =>
+                    prev.filter(
+                        (item) => Number(item.gameId) !== Number(obj.id)
+                    )
+                );
+                await axios.delete(`${MOCKAPI_URL_CART}/${obj.id}`);
+                console.log(obj.id, obj.gameId);
+            } else {
+                const { data } = await axios.post(MOCKAPI_URL_CART, obj);
+                setCartItems((prev) => [...prev, data]);
+                console.log(obj.id, obj.gameId);
+            }
+        } catch (error) {
+            alert('Failed to work with data in the cart');
+            console.error(error);
         }
     };
 
     const onRemoveFromCart = (id) => {
-        axios.delete(`${MOCKAPI_URL_CART}/${id}`);
-        setCartItems((prev) => prev.filter((el) => el.id !== id));
+        try {
+            axios.delete(`${MOCKAPI_URL_CART}/${id}`);
+            setCartItems((prev) =>
+                prev.filter((el) => Number(el.id) !== Number(id))
+            );
+        } catch (error) {
+            alert('Failed to delete data from the cart');
+            console.error(error);
+        }
     };
 
     const onAddToFavorite = async (obj) => {
         try {
             if (JSON.stringify(favorites).includes(obj.title)) {
-                axios.delete(`${MOCKAPI_URL_FAVORITES}/${obj.id}`);
-                setFavorites((prev) => prev.filter((el) => el.id !== obj.id));
+                setFavorites((prev) =>
+                    prev.filter((el) => Number(el.id) !== Number(obj.id))
+                );
+                await axios.delete(`${MOCKAPI_URL_FAVORITES}/${obj.id}`);
+                console.log(obj.id, obj.gameId, obj);
             }
             if (!JSON.stringify(favorites).includes(obj.title)) {
                 const { data } = await axios.post(MOCKAPI_URL_FAVORITES, obj);
                 setFavorites((prev) => [...prev, data]);
+                console.log(obj.id, obj.gameId, obj);
             }
         } catch (error) {
-            alert('Failed to add to favorites');
+            alert('Failed to work with data in the cart');
+            console.error(error);
         }
     };
 
@@ -79,7 +104,8 @@ const App = () => {
         setSearchValue(event.target.value);
     };
 
-    const getIsCheck = (title) => cartItems.some((obj) => obj.title === title);
+    const getIsCheck = (id) =>
+        cartItems.some((obj) => Number(obj.gameId) === Number(id));
 
     return (
         <AppContext.Provider

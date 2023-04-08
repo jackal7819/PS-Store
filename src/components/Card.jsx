@@ -18,13 +18,14 @@ const Card = (props) => {
     } = props;
     const { getIsCheck } = useContext(AppContext);
     const [favorite, setFavorite] = useState(isFavorite);
+    const obj = { id, gameId: id, title, image, price };
 
     const onClickPlus = () => {
-        onPlus({ id, title, image, price });
+        onPlus(obj);
     };
 
     const onClickFavorite = () => {
-        onFavorite({ id, title, image, price });
+        onFavorite(obj);
         setFavorite(!favorite);
     };
 
@@ -79,7 +80,7 @@ const Card = (props) => {
                         )}
                         {onPlus && (
                             <button onClick={onClickPlus}>
-                                {getIsCheck(title) ? (
+                                {getIsCheck(id) ? (
                                     <RiShoppingCartFill
                                         size={25}
                                         className='fill-green-400'

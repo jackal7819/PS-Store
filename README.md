@@ -1,6 +1,6 @@
 # PS Store
 
-## React JS, useEffect, Tailwind, MOCKAPI
+## React JS, useState, useEffect, useContext, custom hooks, Tailwind, MOCKAPI
 
 Demo - https://ps-store.onrender.com
 

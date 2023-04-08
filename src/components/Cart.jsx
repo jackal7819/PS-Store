@@ -40,7 +40,7 @@ const Cart = ({ isClosed, onRemove, items = [] }) => {
     };
 
     return (
-        <div className='cart absolute left-0 top-0 w-full h-full bg-[#0000004d] z-10'>
+        <div className='bg-black/60 fixed w-full h-screen z-10 top-0 left-0'>
             <div className='absolute w-96 h-full right-0 bg-white shadow-lg p-8 flex flex-col gap-5'>
                 <div className='flex justify-between'>
                     <h2 className='font-bold text-2xl'>Shopping Cart</h2>

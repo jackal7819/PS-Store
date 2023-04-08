@@ -35,7 +35,9 @@ const Orders = () => {
                     </div>
                 ) : (
                     orders.map((order, index) => (
-                        <div key={index} className='mb-[58px]'>
+                        <div
+                            key={index}
+                            className='mb-[58px] pb-10 border-b-2 border-gray-200'>
                             <h2 className='font-bold text-2xl mb-5'>
                                 Order #{order.id}
                             </h2>
